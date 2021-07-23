@@ -14,7 +14,7 @@ $ conda activate codex
 
 Check out and install this repository:
 ```
-$ git checkout https://github.com/openai/human-eval
+$ git clone https://github.com/openai/human-eval
 $ pip install -e human-eval
 ```
 
