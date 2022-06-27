@@ -18,6 +18,11 @@ $ git clone https://github.com/openai/human-eval
 $ pip install -e human-eval
 ```
 
+Or use pip directly to install from repository:
+```
+$ pip install git+https://github.com/openai/human-eval.git@master#egg=human-eval
+```
+
 ## Usage
 
 **This program exists to run untrusted model-generated code. Users are strongly
