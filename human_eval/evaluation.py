@@ -69,7 +69,7 @@ def evaluate_functional_correctness(
             completion_id[task_id] += 1
             n_samples += 1
 
-        if ignore_incomplete:
+        if not ignore_incomplete:
             assert len(completion_id) == len(problems), "Some problems are not attempted."
 
         print("Running test suites...")
