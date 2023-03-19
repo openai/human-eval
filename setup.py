@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 setup(
     name="human-eval",
     py_modules=["human-eval"],
-    version="1.0",
+    version="1.0.2",
     description="",
     author="OpenAI",
     packages=find_packages(),
@@ -19,7 +19,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "evaluate_functional_correctness = human_eval.evaluate_functional_correctness",
+            "evaluate_functional_correctness = human_eval.evaluate_functional_correctness:main",
         ]
     }
 )

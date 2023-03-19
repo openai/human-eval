@@ -42,6 +42,7 @@ def evaluate_functional_correctness(
     n_workers: int = 4,
     timeout: float = 3.0,
     problem_file: str = HUMAN_EVAL,
+    ignore_incomplete: bool = False
 ):
     """
     Evaluates the functional correctness of generated samples, and writes
@@ -68,7 +69,8 @@ def evaluate_functional_correctness(
             completion_id[task_id] += 1
             n_samples += 1
 
-        assert len(completion_id) == len(problems), "Some problems are not attempted."
+        if not ignore_incomplete:
+            assert len(completion_id) == len(problems), "Some problems are not attempted."
 
         print("Running test suites...")
         for future in tqdm.tqdm(as_completed(futures), total=len(futures)):
