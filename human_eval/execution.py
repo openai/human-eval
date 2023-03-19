@@ -3,10 +3,10 @@ import contextlib
 import faulthandler
 import io
 import os
-import multiprocessing
 import platform
 import signal
 import tempfile
+from multiprocessing import Manager, Process
 
 
 def unsafe_execute(problem: Dict[str, Any], completion: str, timeout: float, result: List):
@@ -55,25 +55,24 @@ def check_correctness(problem: Dict, completion: str, timeout: float,
     :param completion_id: an optional completion ID so we can match
         the results later even if execution finishes asynchronously.
     """
+    with Manager() as manager:
+        result = manager.list()
 
-    manager = multiprocessing.Manager()
-    result = manager.list()
+        p = Process(target=unsafe_execute, args=(problem, completion, timeout, result))
+        p.start()
+        p.join(timeout=timeout + 1)
+        if p.is_alive():
+            p.kill()
 
-    p = multiprocessing.Process(target=unsafe_execute, args=(problem, completion, timeout, result))
-    p.start()
-    p.join(timeout=timeout + 1)
-    if p.is_alive():
-        p.kill()
+        if not result:
+            result.append("timed out")
 
-    if not result:
-        result.append("timed out")
-
-    return dict(
-        task_id=problem["task_id"],
-        passed=result[0] == "passed",
-        result=result[0],
-        completion_id=completion_id,
-    )
+        return dict(
+            task_id=problem["task_id"],
+            passed=result[0] == "passed",
+            result=result[0],
+            completion_id=completion_id,
+        )
 
 
 @contextlib.contextmanager
