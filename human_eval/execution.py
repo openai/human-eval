@@ -32,7 +32,6 @@ def check_correctness(problem: Dict, completion: str, timeout: float,
             chdir = os.chdir
             getcwd = os.getcwd
 
-
             # Disable functionalities that can make destructive changes to the test.
             reliability_guard()
 
@@ -69,7 +68,6 @@ def check_correctness(problem: Dict, completion: str, timeout: float,
             os.rmdir = rmdir
             os.chdir = chdir
             os.getcwd = getcwd
-
 
     manager = multiprocessing.Manager()
     result = manager.list()
