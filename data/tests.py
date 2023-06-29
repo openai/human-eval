@@ -15,7 +15,7 @@ def test_HumanEval_32_fix():
         assert "only only zero point" in original_prompt
 
     # the fixed prompt is "find_zero returns only one zero point"
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[32]["prompt"]
         assert "only only zero point" not in fixed_prompt
@@ -37,7 +37,7 @@ def test_HumanEval_38_fix():
 
     # the fixed prompt has 2 examples in the docstring of decode_cyclic
     # we didn't add examples for encode_cyclic to maintain consistency with other tasks like 32
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[38]["prompt"]
         assert ">>> decode_cyclic('bca')\n    'abc'\n" in fixed_prompt
@@ -62,7 +62,7 @@ def test_HumanEval_41_fix():
         assert ">>> car_race_collision" not in original_prompt
 
     # the fixed prompt has 1 example
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[41]["prompt"]
         assert ">>> car_race_collision(3)\n    9\n" in fixed_prompt
@@ -82,7 +82,7 @@ def test_HumanEval_47_fix():
         assert ">>> median([-10, 4, 6, 1000, 10, 20])\n    15.0\n" in original_prompt
 
     # the fixed prompt has the correct example
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[47]["prompt"]
         assert ">>> median([-10, 4, 6, 1000, 10, 20])\n    8.0\n" in fixed_prompt
@@ -103,7 +103,7 @@ def test_HumanEval_50_fix():
 
     # the fixed prompt has 1 exmaple in the docstring of decode_shift
     # we didn't add examples for encode_shift to maintain consistency with other tasks like 32 and 38
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[50]["prompt"]
         assert ">>> decode_shift('abc')\n    'vwx'\n" in fixed_prompt
@@ -126,7 +126,7 @@ def test_HumanEval_57_fix():
     # the fixed prompt is
     # "Return True if list elements are monotonically increasing or decreasing.
     # Still return True when list elements are non-strictly monotonically increasing or decreasing."
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[57]["prompt"]
         assert "Return True if list elements are monotonically increasing or decreasing." in fixed_prompt
@@ -146,13 +146,33 @@ def test_HumanEval_67_fix():
         assert "for examble" in original_prompt
 
     # the fixed prompt is "for example"
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[67]["prompt"]
         assert "for example" in fixed_prompt
 
         # make sure the function definition is correct
         solution = reader_list[67]["canonical_solution"]
+        func_def_code = fixed_prompt + solution
+        exec(func_def_code)
+
+
+def test_HumanEval_75_fix():
+    # the original prompt doesn't align with the canonical solution and the tests
+    # reference https://huggingface.co/datasets/openai_humaneval/discussions/2
+    with jsonlines.open("human-eval-v2-20210705.jsonl") as reader:
+        reader_list = list(reader)
+        original_prompt = reader_list[75]["prompt"]
+        assert "Knowing that (a) is less then 100. " in original_prompt
+
+    # the fixed prompt is "Each of the 3 prime numbers is less than 100."
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
+        reader_list = list(reader)
+        fixed_prompt = reader_list[75]["prompt"]
+        assert "Each of the 3 prime numbers is less than 100." in fixed_prompt
+
+        # make sure the function definition is correct
+        solution = reader_list[75]["canonical_solution"]
         func_def_code = fixed_prompt + solution
         exec(func_def_code)
 
@@ -166,7 +186,7 @@ def test_HumanEval_83_fix():
         assert ">>> starts_one_ends" not in original_prompt
 
     # the fixed prompt has 1 exmaple in the docstring of starts_one_ends
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[83]["prompt"]
         assert ">>> starts_one_ends(2)\n    18\n" in fixed_prompt
@@ -183,7 +203,7 @@ def test_HumanEval_95_fix():
     # the fixed canonical solution is correct, by changing "break" to "continue" in the last else clause
     # also, we changed 1 test case "assert candidate({"p":"pineapple", "A":"banana", "B":"banana"}) == False" to
     # "assert candidate({A":"banana", "B":"banana"，"p":"pineapple"}) == False" to capture similar mistakes
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_canonical_solution = reader_list[95]["canonical_solution"]
         assert "else:\n                break\n        return state == \"upper\" or state == \"lower\" \n" not in fixed_canonical_solution
@@ -200,13 +220,41 @@ def test_HumanEval_95_fix():
         exec(func_def_code + "\n\ncheck(check_dict_case)")
 
 
+def test_HumanEval_116_fix():
+    # the original prompt doesn't align with the canonical solution and the tests
+    # also wrong examples in prompt
+    # reference https://huggingface.co/datasets/openai_humaneval/discussions/1
+    with jsonlines.open("human-eval-v2-20210705.jsonl") as reader:
+        reader_list = list(reader)
+        original_prompt = reader_list[116]["prompt"]
+        assert "sort an array of non-negative integers according" in original_prompt
+        assert ">>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]" in original_prompt
+        assert ">>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]" in original_prompt
+
+    # the fixed prompt delted "non-negative" before "integers"
+    # the 2nd example is corrected to ">>> sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]"
+    # the 3rd example is corrected to ">>> sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]"
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
+        reader_list = list(reader)
+        fixed_prompt = reader_list[116]["prompt"]
+        assert "sort an array of integers according" in fixed_prompt
+        assert ">>> sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]" in fixed_prompt
+        assert ">>> sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]" in fixed_prompt
+
+        # make sure the function definition and the fixed exmaples is correct
+        solution = reader_list[116]["canonical_solution"]
+        func_def_code = fixed_prompt + solution
+        exec(func_def_code + "\n\nassert sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]")
+        exec(func_def_code + "\n\nassert sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]")
+
+
 def test_HumanEval_163_fix():
     # the canonical solution is wrong, and test cases don't cover that type of mistakes
     # reference https://github.com/openai/human-eval/issues/20
     # the fixed canonical solution is correct, by changing removing the lower boudning between 2 and 8
     # also, we changed 1 test case "candidate(132, 2)" to "candidate(13, 2)" due to the length of the output
     # and we corrected all other test cases
-    with jsonlines.open("human-eval-enhanced-202305.jsonl") as reader:
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_canonical_solution = reader_list[163]["canonical_solution"]
         assert "max(2, min(a, b))" not in fixed_canonical_solution
