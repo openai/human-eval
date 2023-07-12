@@ -101,7 +101,7 @@ def test_HumanEval_50_fix():
         original_prompt = reader_list[50]["prompt"]
         assert ">>> encode_shift" not in original_prompt
 
-    # the fixed prompt has 1 exmaple in the docstring of decode_shift
+    # the fixed prompt has 1 example in the docstring of decode_shift
     # we didn't add examples for encode_shift to maintain consistency with other tasks like 32 and 38
     with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
@@ -204,7 +204,7 @@ def test_HumanEval_83_fix():
         original_prompt = reader_list[83]["prompt"]
         assert ">>> starts_one_ends" not in original_prompt
 
-    # the fixed prompt has 1 exmaple in the docstring of starts_one_ends
+    # the fixed prompt has 1 example in the docstring of starts_one_ends
     with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[83]["prompt"]
@@ -250,7 +250,7 @@ def test_HumanEval_116_fix():
         assert ">>> sort_array([-2, -3, -4, -5, -6]) == [-6, -5, -4, -3, -2]" in original_prompt
         assert ">>> sort_array([1, 0, 2, 3, 4]) [0, 1, 2, 3, 4]" in original_prompt
 
-    # the fixed prompt delted "non-negative" before "integers"
+    # the fixed prompt deleted "non-negative" before "integers"
     # the 2nd example is corrected to ">>> sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]"
     # the 3rd example is corrected to ">>> sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]"
     with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
@@ -260,7 +260,7 @@ def test_HumanEval_116_fix():
         assert ">>> sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]" in fixed_prompt
         assert ">>> sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]" in fixed_prompt
 
-        # make sure the function definition and the fixed exmaples is correct
+        # make sure the function definition and the fixed examples is correct
         solution = reader_list[116]["canonical_solution"]
         func_def_code = fixed_prompt + solution
         exec(func_def_code + "\n\nassert sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]", {})
