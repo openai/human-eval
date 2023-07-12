@@ -139,13 +139,13 @@ def test_HumanEval_57_fix():
 
 
 def test_HumanEval_64_fix():
-    # the original prompt has a useless string
+    # the original prompt has an unnecessary statement
     with jsonlines.open("human-eval-v2-20210705.jsonl") as reader:
         reader_list = list(reader)
         original_prompt = reader_list[64]["prompt"]
         assert "FIX = \"\"\"\nAdd more test cases.\n\"\"\"" in original_prompt
 
-    # the fixed prompt doesn't have the useless string
+    # the fixed prompt doesn't have the unnecessary statement
     with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
         reader_list = list(reader)
         fixed_prompt = reader_list[64]["prompt"]
