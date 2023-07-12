@@ -24,7 +24,7 @@ def test_HumanEval_32_fix():
         # make sure the function definition is correct
         solution = reader_list[38]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code)
+        exec(func_def_code, {})
 
 
 def test_HumanEval_38_fix():
@@ -49,8 +49,8 @@ def test_HumanEval_38_fix():
         func_def_code = fixed_prompt + solution
 
         # decode_cyclic(string) is equivalent to encode_cyclic(encode_cyclics(string))
-        exec(func_def_code + "\n\nassert encode_cyclic(encode_cyclic('bca')) == 'abc'")
-        exec(func_def_code + "\n\nassert encode_cyclic(encode_cyclic('ab')) == 'ab'")
+        exec(func_def_code + "\n\nassert encode_cyclic(encode_cyclic('bca')) == 'abc'", {})
+        exec(func_def_code + "\n\nassert encode_cyclic(encode_cyclic('ab')) == 'ab'", {})
 
 
 def test_HumanEval_41_fix():
@@ -70,7 +70,7 @@ def test_HumanEval_41_fix():
         # make sure the added example is correct
         solution = reader_list[41]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert car_race_collision(3) == 9")
+        exec(func_def_code + "\n\nassert car_race_collision(3) == 9", {})
 
 
 def test_HumanEval_47_fix():
@@ -90,7 +90,7 @@ def test_HumanEval_47_fix():
         # make sure the added example is correct
         solution = reader_list[47]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert median([-10, 4, 6, 1000, 10, 20]) == 8.0")
+        exec(func_def_code + "\n\nassert median([-10, 4, 6, 1000, 10, 20]) == 8.0", {})
 
 
 def test_HumanEval_50_fix():
@@ -112,7 +112,7 @@ def test_HumanEval_50_fix():
         # make sure the added example is correct
         solution = reader_list[50]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert decode_shift('abc') == 'vwx'")
+        exec(func_def_code + "\n\nassert decode_shift('abc') == 'vwx'", {})
 
 
 def test_HumanEval_57_fix():
@@ -135,7 +135,26 @@ def test_HumanEval_57_fix():
         # make sure the function definition is correct
         solution = reader_list[57]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert monotonic([1, 2, 3]) is True")
+        exec(func_def_code + "\n\nassert monotonic([1, 2, 3]) is True", {})
+
+
+def test_HumanEval_64_fix():
+    # the original prompt has a useless string
+    with jsonlines.open("human-eval-v2-20210705.jsonl") as reader:
+        reader_list = list(reader)
+        original_prompt = reader_list[64]["prompt"]
+        assert "FIX = \"\"\"\nAdd more test cases.\n\"\"\"" in original_prompt
+
+    # the fixed prompt doesn't have the useless string
+    with jsonlines.open("human-eval-enhanced-202306.jsonl") as reader:
+        reader_list = list(reader)
+        fixed_prompt = reader_list[64]["prompt"]
+        assert "FIX = \"\"\"\nAdd more test cases.\n\"\"\"" not in fixed_prompt
+
+        # make sure the function definition is correct
+        solution = reader_list[64]["canonical_solution"]
+        func_def_code = fixed_prompt + solution
+        exec(func_def_code, {})
 
 
 def test_HumanEval_67_fix():
@@ -154,7 +173,7 @@ def test_HumanEval_67_fix():
         # make sure the function definition is correct
         solution = reader_list[67]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code)
+        exec(func_def_code, {})
 
 
 def test_HumanEval_75_fix():
@@ -174,7 +193,7 @@ def test_HumanEval_75_fix():
         # make sure the function definition is correct
         solution = reader_list[75]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code)
+        exec(func_def_code, {})
 
 
 def test_HumanEval_83_fix():
@@ -194,7 +213,7 @@ def test_HumanEval_83_fix():
         # make sure the added example is correct
         solution = reader_list[83]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert starts_one_ends(2) == 18")
+        exec(func_def_code + "\n\nassert starts_one_ends(2) == 18", {})
 
 
 def test_HumanEval_95_fix():
@@ -217,7 +236,7 @@ def test_HumanEval_95_fix():
         # make sure the fixed canonical solution is correct
         prompt = reader_list[95]["prompt"]
         func_def_code = prompt + fixed_canonical_solution + fixed_tests
-        exec(func_def_code + "\n\ncheck(check_dict_case)")
+        exec(func_def_code + "\n\ncheck(check_dict_case)", {})
 
 
 def test_HumanEval_116_fix():
@@ -244,8 +263,8 @@ def test_HumanEval_116_fix():
         # make sure the function definition and the fixed exmaples is correct
         solution = reader_list[116]["canonical_solution"]
         func_def_code = fixed_prompt + solution
-        exec(func_def_code + "\n\nassert sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]")
-        exec(func_def_code + "\n\nassert sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]")
+        exec(func_def_code + "\n\nassert sort_array([-2, -3, -4, -5, -6]) == [-4, -2, -6, -5, -3]", {})
+        exec(func_def_code + "\n\nassert sort_array([1, 0, 2, 3, 4]) == [0, 1, 2, 4, 3]", {})
 
 
 def test_HumanEval_163_fix():
@@ -274,7 +293,7 @@ def test_HumanEval_163_fix():
         # make sure the fixed canonical solution is correct
         prompt = reader_list[163]["prompt"]
         func_def_code = prompt + fixed_canonical_solution + fixed_tests
-        exec(func_def_code + "\n\ncheck(generate_integers)")
+        exec(func_def_code + "\n\ncheck(generate_integers)", {})
 
 
 def main():
@@ -284,6 +303,7 @@ def main():
     test_HumanEval_47_fix()
     test_HumanEval_50_fix()
     test_HumanEval_57_fix()
+    test_HumanEval_64_fix()
     test_HumanEval_67_fix()
     test_HumanEval_83_fix()
     test_HumanEval_95_fix()
