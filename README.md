@@ -8,7 +8,7 @@ Code](https://arxiv.org/abs/2107.03374)".
 
 Make sure to use python 3.7 or later:
 ```
-$ conda create -n codex python=3.7
+$ conda create -n codex python=3.10
 $ conda activate codex
 ```
 
