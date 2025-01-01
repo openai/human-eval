@@ -1,3 +1,4 @@
 tqdm
 fire
 numpy
+pywin32>=306; platform_system == "Windows"
