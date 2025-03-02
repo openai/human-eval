@@ -8,14 +8,15 @@ Code](https://arxiv.org/abs/2107.03374)".
 
 Make sure to use python 3.7 or later:
 ```
-$ conda create -n codex python=3.7
-$ conda activate codex
+conda create -n codex python=3.7
+conda activate codex
 ```
 
 Check out and install this repository:
 ```
-$ git clone https://github.com/openai/human-eval
-$ pip install -e .
+git clone https://github.com/openai/human-eval
+cd human-eval
+pip install -e .
 ```
 
 ## Usage
