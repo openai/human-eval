@@ -7,13 +7,13 @@ Code](https://arxiv.org/abs/2107.03374)".
 ## Installation
 
 Make sure to use python 3.7 or later:
-```
+```console
 $ conda create -n codex python=3.7
 $ conda activate codex
 ```
 
 Check out and install this repository:
-```
+```console
 $ git clone https://github.com/openai/human-eval
 $ pip install -e human-eval
 ```
@@ -30,7 +30,7 @@ disclaimer before running code in a potentially unsafe manner. See the comment i
 After following the above instructions to enable execution, generate samples
 and save them in the following JSON Lines (jsonl) format, where each sample is
 formatted into a single line like so:
-```
+```json
 {"task_id": "Corresponding HumanEval task ID", "completion": "Completion only without the prompt"}
 ```
 We provide `example_problem.jsonl` and `example_solutions.jsonl` under `data`
@@ -39,7 +39,7 @@ to illustrate the format and help with debugging.
 Here is nearly functional example code (you just have to provide
 `generate_one_completion` to make it work) that saves generated completions to
 `samples.jsonl`.
-```
+```py
 from human_eval.data import write_jsonl, read_problems
 
 problems = read_problems()
@@ -54,7 +54,7 @@ write_jsonl("samples.jsonl", samples)
 ```
 
 To evaluate the samples, run
-```
+```console
 $ evaluate_functional_correctness samples.jsonl
 Reading samples...
 32800it [00:01, 23787.50it/s]
@@ -70,7 +70,7 @@ This script provides more fine-grained information in a new file ending in
 out", or "failed".
 
 As a quick sanity-check, the example samples should yield 0.5 pass@1.
-```
+```console
 $ evaluate_functional_correctness data/example_samples.jsonl --problem_file=data/example_problem.jsonl
 Reading samples...
 6it [00:00, 3397.11it/s]
@@ -85,7 +85,7 @@ Because there is no unbiased way of estimating pass@k when there are fewer
 samples than k, the script does not evaluate pass@k for these cases. To
 evaluate with other k values, pass `--k=<comma-separated-values-here>`. For
 other options, see
-```
+```console
 $ evaluate_functional_correctness --help
 ```
 However, we recommend that you use the default values for the rest.
