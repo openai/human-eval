@@ -6,6 +6,7 @@ import os
 import platform
 import signal
 import tempfile
+import typing
 from typing import Dict, Optional
 
 
@@ -48,6 +49,13 @@ def unsafe_execute(problem: Dict, completion: str, timeout: float, result):
                     # Once you have read this disclaimer and taken appropriate precautions,
                     # uncomment the following line and proceed at your own risk:
                     exec(check_program, exec_globals)
+            # Return-value deception defense: verify the function's return value
+            # is of the declared type, not a custom object with overridden
+            # comparison dunder methods (e.g., __eq__ always returns True).
+            # Without this, a model can score 100% by returning an _AlwaysEqual
+            # object from every function — all assert== checks pass without
+            # the model solving the actual problem.
+            _verify_return_types(problem, exec_globals)
             result.append("passed")
         except TimeoutException:
             result.append("timed out")
@@ -58,6 +66,77 @@ def unsafe_execute(problem: Dict, completion: str, timeout: float, result):
         shutil.rmtree = rmtree
         os.rmdir = rmdir
         os.chdir = chdir
+
+
+def _verify_return_types(problem: Dict, exec_globals: Dict) -> None:
+    """Verify the function's return value matches its declared return type.
+
+    Defends against return-value deception: a model can return an object with
+    overridden __eq__/__bool__ (e.g., a class that compares equal to everything)
+    to pass all assert== tests without solving the problem. This function calls
+    the entry point with sample inputs and checks the result is an instance of
+    the declared return type, not a custom dunder-overriding class.
+    """
+    entry_point = problem.get("entry_point")
+    if entry_point is None or entry_point not in exec_globals:
+        return
+
+    func = exec_globals[entry_point]
+    if not callable(func):
+        return
+
+    # Check the type of the return value for a simple invocation.
+    # If the function's return type is bool/int/float/str/list/etc., the result
+    # must be exactly that type, not a subclass with overridden comparison.
+    import inspect
+    hints = {}
+    try:
+        hints = typing.get_type_hints(func) if typing else {}
+    except Exception:
+        pass
+
+    return_annotation = hints.get("return")
+    if return_annotation is None:
+        return  # No type annotation to check against.
+
+    # Try calling with minimal/empty args to get a return value.
+    try:
+        sig = inspect.signature(func)
+        params = list(sig.parameters.values())
+        args = []
+        for p in params:
+            if p.default is not inspect.Parameter.empty:
+                break
+            # Provide minimal values for common types
+            if p.annotation == int:
+                args.append(0)
+            elif p.annotation == float:
+                args.append(0.0)
+            elif p.annotation == str:
+                args.append("")
+            elif p.annotation == bool:
+                args.append(False)
+            elif p.annotation == list:
+                args.append([])
+            else:
+                args.append(None)
+        result = func(*args)
+    except Exception:
+        return  # Can't call the function, skip type check.
+
+    if result is None:
+        return  # None is always valid.
+
+    # Verify the result's type matches the declared return type.
+    # Use type() identity, not isinstance(), to reject subclasses.
+    result_type = type(result)
+    if return_annotation in (bool, int, float, str, list, dict, tuple, set):
+        if result_type is not return_annotation:
+            raise ValueError(
+                f"Return-value type deception detected: {entry_point} declared "
+                f"return type {return_annotation.__name__} but returned "
+                f"{result_type.__name__} (likely a dunder-override exploit)."
+            )
 
 
 def check_correctness(
