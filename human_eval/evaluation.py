@@ -23,6 +23,11 @@ def estimate_pass_at_k(
         """
         Calculates 1 - comb(n - c, k) / comb(n, k).
         """
+        if c == 0:
+            # With no correct samples, pass@k is exactly 0 for any k. Guarding
+            # this here avoids the ``n - c < k`` shortcut below wrongly returning
+            # 1.0 when ``k`` exceeds the number of samples ``n``.
+            return 0.0
         if n - c < k:
             return 1.0
         return 1.0 - np.prod(1.0 - k / np.arange(n - c + 1, n + 1))
