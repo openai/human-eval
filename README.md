@@ -1,5 +1,9 @@
 # HumanEval: Hand-Written Evaluation Set 
 
+> **Deprecated and unmaintained:** This repository is no longer maintained and is
+> provided for historical reference, without ongoing support or updates. Use it
+> at your own risk.
+
 This is an evaluation harness for the HumanEval problem solving dataset
 described in the paper "[Evaluating Large Language Models Trained on
 Code](https://arxiv.org/abs/2107.03374)".
