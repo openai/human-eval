@@ -23,16 +23,6 @@ def unsafe_execute(problem: Dict, completion: str, timeout: float, result):
         # Disable functionalities that can make destructive changes to the test.
         reliability_guard()
 
-        # Construct the check program and run it.
-        check_program = (
-            problem["prompt"]
-            + completion
-            + "\n"
-            + problem["test"]
-            + "\n"
-            + f"check({problem['entry_point']})"
-        )
-
         try:
             exec_globals = {}
             with swallow_io():
@@ -47,7 +37,21 @@ def unsafe_execute(problem: Dict, completion: str, timeout: float, result):
                     # information on how OpenAI sandboxes its code, see the accompanying paper.
                     # Once you have read this disclaimer and taken appropriate precautions,
                     # uncomment the following line and proceed at your own risk:
-                    exec(check_program, exec_globals)
+                    #
+                    # Run the test block first and keep hold of its check
+                    # function. The completion is untrusted text, so it must
+                    # never share a program with the test block: a completion
+                    # whose last line is a decorator would attach to the
+                    # test's own `def check` and replace it with a no-op,
+                    # scoring the sample as passed without running any
+                    # assert. Calling the captured check object instead of
+                    # the (possibly replaced) global name keeps the test in
+                    # charge, and a dangling decorator at the end of the
+                    # completion is now just a syntax error in its own exec.
+                    exec(problem["test"], exec_globals)
+                    check = exec_globals["check"]
+                    exec(problem["prompt"] + completion, exec_globals)
+                    check(exec_globals[problem["entry_point"]])
             result.append("passed")
         except TimeoutException:
             result.append("timed out")
