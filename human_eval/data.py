@@ -16,6 +16,7 @@ def stream_jsonl(filename: str) -> Iterable[Dict]:
     """
     Parses each jsonl line and yields it as a dictionary
     """
+    filename = os.path.expanduser(filename)
     if filename.endswith(".gz"):
         with open(filename, "rb") as gzfp:
             with gzip.open(gzfp, 'rt') as fp:
